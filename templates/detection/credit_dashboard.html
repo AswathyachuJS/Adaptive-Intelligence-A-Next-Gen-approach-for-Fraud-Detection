@@ -1,0 +1,92 @@
+{% extends 'detection/base.html' %}
+
+{% block content %}
+<h2>Credit Card Fraud Dashboard</h2>
+
+<canvas id="fraudChart" width="800" height="400"></canvas>
+
+<table>
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Amount</th>
+      <th>Prediction</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for txn in transactions %}
+    <tr>
+      <td>{{ txn.time }}</td>
+      <td>{{ txn.amount }}</td>
+      <td class="{% if txn.prediction == 'Fraud' %}fraud{% else %}legit{% endif %}">
+        {{ txn.prediction }}
+      </td>
+      <td>{{ txn.timestamp }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<style>
+  .fraud {
+    color: red;
+    font-weight: bold;
+  }
+  .legit {
+    color: green;
+    font-weight: bold;
+  }
+</style>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  let fraudChart;
+
+  function fetchChartData() {
+    fetch("{% url 'dashboard_credit_json' %}")
+      .then(response => response.json())
+      .then(data => {
+        const times = data.map(entry => entry.time);
+        const amounts = data.map(entry => entry.amount);
+        const colors = data.map(entry => entry.prediction === 'Fraud' ? 'rgba(255, 0, 0, 0.7)' : 'rgba(0, 128, 0, 0.7)');
+
+        const chartData = {
+          labels: times,
+          datasets: [{
+            label: 'Amount',
+            data: amounts,
+            borderColor: colors,
+            backgroundColor: colors,
+            pointRadius: 5,
+            fill: false,
+            tension: 0.1
+          }]
+        };
+
+        const config = {
+          type: 'line',
+          data: chartData,
+          options: {
+            scales: {
+              x: { title: { display: true, text: 'Time' }},
+              y: { title: { display: true, text: 'Amount' }}
+            }
+          }
+        };
+
+        if (fraudChart) {
+          fraudChart.destroy();
+        }
+
+        const ctx = document.getElementById('fraudChart').getContext('2d');
+        fraudChart = new Chart(ctx, config);
+      });
+  }
+
+  fetchChartData();
+  setInterval(fetchChartData, 5000);
+</script>
+{% endblock %}

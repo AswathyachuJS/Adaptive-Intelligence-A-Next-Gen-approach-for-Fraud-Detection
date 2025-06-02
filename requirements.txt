@@ -1,0 +1,7 @@
+tensorflow
+scikit-learn
+django
+numpy
+pandas
+xgboost
+djangorestframework

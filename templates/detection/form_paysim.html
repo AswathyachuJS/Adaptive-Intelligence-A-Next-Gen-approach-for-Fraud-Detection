@@ -1,0 +1,40 @@
+{% extends 'detection/base.html' %}
+
+{% block title %}PaySim Fraud Detection{% endblock %}
+
+{% block content %}
+    {% if error %}
+        <div style="color: red;">Error: {{ error }}</div>
+    {% endif %}
+
+    <h2>PaySim Fraud Detection</h2>
+    <form method="post">
+        {% csrf_token %}
+
+         <label for="type">Transaction Type:</label>
+         <select name="type" required>
+            <option value="PAYMENT">PAYMENT</option>
+            <option value="DEBIT">DEBIT</option>
+            <option value="CASH_OUT">CASH_OUT</option>
+            <option value="TRANSFER">TRANSFER</option>
+         </select>
+
+        <label for="step">Step:</label>
+        <input type="number" step="any" name="step" required>
+
+        <label for="amount">Amount:</label>
+        <input type="number" step="any" name="amount" required>
+
+        <label for="oldbalanceOrg">Old Balance (Origin):</label>
+        <input type="number" step="any" name="oldbalanceOrg" required>
+
+        <label for="oldbalanceDest">Old Balance (Destination):</label>
+        <input type="number" step="any" name="oldbalanceDest" required>
+
+        <label for="newbalanceDest">New Balance (Destination):</label>
+        <input type="number" step="any" name="newbalanceDest" required>
+
+         <button type="submit">Predict</button>
+   </form>
+
+{% endblock %}

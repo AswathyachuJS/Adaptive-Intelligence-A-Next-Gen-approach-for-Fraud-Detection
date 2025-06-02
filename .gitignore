@@ -1,0 +1,17 @@
+# Ignore Python virtual environment
+venv/
+.env
+*.pyc
+__pycache__/
+db.sqlite3
+
+# Ignore editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Ignore migration cache (optional)
+*/migrations/__pycache__/

@@ -1,0 +1,14 @@
+{% extends 'detection/base.html' %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+<h2>Prediction Result</h2>
+<p>
+    The transaction is:
+    <strong class="{% if prediction == 'Fraud' %}fraud{% else %}legit{% endif %}">
+        {{ prediction }}
+    </strong>
+</p>
+<a href="{% url 'home' %}">Back to Home</a>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'detection/base.html' %}
+
+{% block title %}Online Fraud Prediction{% endblock %}
+
+{% block content %}
+<h2>Online Payment Fraud Detection</h2>
+
+<form id="onlineForm">
+    <label>Feature 1: <input type="number" name="f1" required></label><br>
+    <label>Feature 2: <input type="number" name="f2" required></label><br>
+    <label>Feature 3: <input type="number" name="f3" required></label><br>
+    <!-- Add as many fields as your model expects -->
+    <button type="submit">Predict</button>
+</form>
+
+<p id="result"></p>
+
+<script>
+document.getElementById("onlineForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const features = Array.from(form.elements)
+        .filter(el => el.name.startsWith("f"))
+        .map(el => parseFloat(el.value));
+
+    fetch("/api/predict/online/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ features: features })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("result").textContent = 
+            data.prediction === 1 ? "Fraudulent" : "Not Fraudulent";
+    })
+    .catch(err => {
+        document.getElementById("result").textContent = "Error: " + err;
+    });
+});
+</script>
+{% endblock %}

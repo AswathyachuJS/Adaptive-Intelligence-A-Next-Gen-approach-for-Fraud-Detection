@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PaySim Fraud Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            padding: 40px;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h2>PaySim Fraud Detection</h2>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="step">Step:</label>
+        <input type="number" step="any" name="step" required>
+
+        <label for="amount">Amount:</label>
+        <input type="number" step="any" name="amount" required>
+
+        <label for="oldbalanceOrg">Old Balance Origin:</label>
+        <input type="number" step="any" name="oldbalanceOrg" required>
+
+        <label for="newbalanceOrig">New Balance Origin:</label>
+        <input type="number" step="any" name="newbalanceOrig" required>
+
+        <label for="oldbalanceDest">Old Balance Destination:</label>
+        <input type="number" step="any" name="oldbalanceDest" required>
+
+        <label for="newbalanceDest">New Balance Destination:</label>
+        <input type="number" step="any" name="newbalanceDest" required>
+
+        <label for="isFlaggedFraud">Is Flagged Fraud (0 or 1):</label>
+        <input type="number" step="any" name="isFlaggedFraud" min="0" max="1" required>
+
+        <button type="submit">Predict</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends 'detection/base.html' %}
+
+{% block title %}Home - Fraud Detection{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Fraud Detection System</h2>
+    <p>Select a model from the navigation bar to begin predictions.</p>
+    <p><a href="{% url 'form_online' %}">Try Online Fraud Detection</a></p>
+
+{% endblock %}

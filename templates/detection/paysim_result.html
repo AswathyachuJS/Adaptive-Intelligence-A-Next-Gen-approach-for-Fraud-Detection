@@ -1,0 +1,14 @@
+{% extends 'detection/base.html' %}
+
+{% block content %}
+  <h2>PaySim Model Prediction</h2>
+  <p>
+    Result:
+    <strong class="{% if prediction == 'Fraudulent' %}fraud{% else %}Not Fraudulent{% endif %}">
+      {{ prediction }}
+    </strong>
+  </p>
+
+ 
+  <a href="{% url 'predict_paysim_fraud' %}">Try another prediction</a>
+{% endblock %}

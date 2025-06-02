@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fraud Detection Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Fraud Detection Dashboard</h1>
+
+    <!-- Filters -->
+    <form method="get" style="margin-bottom: 20px;">
+        Start date: <input type="date" name="start_date" value="{{ request.GET.start_date }}">
+        End date: <input type="date" name="end_date" value="{{ request.GET.end_date }}">
+        Label:
+        <select name="label">
+            <option value="">All</option>
+            <option value="0" {% if request.GET.label == '0' %}selected{% endif %}>Not Fraud</option>
+            <option value="1" {% if request.GET.label == '1' %}selected{% endif %}>Fraud</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <!-- Bar Chart -->
+    <canvas id="fraudTrendChart" width="800" height="300"></canvas>
+    <script>
+        const ctx = document.getElementById('fraudTrendChart').getContext('2d');
+        const fraudTrendChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: 'Fraud Cases per Day',
+                    data: {{ chart_data|safe }},
+                    backgroundColor: '#ff6384',
+                    borderColor: '#cc1034',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 1
+                    }
+                }
+            }
+        });
+    </script>
+    <script>
+function fetchUpdatedChartData() {
+    fetch('/api/dashboard-data/')
+        .then(response => response.json())
+        .then(data => {
+            fraudTrendChart.data.labels = data.labels;
+            fraudTrendChart.data.datasets[0].data = data.counts;
+            fraudTrendChart.update();
+        });
+}
+
+// Poll every 10 seconds
+setInterval(fetchUpdatedChartData, 10000);
+</script>
+
+    <!-- Predictions Table -->
+    <h2>Recent Predictions</h2>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Prediction</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for p in predictions %}
+            <tr>
+                <td>{{ p.timestamp }}</td>
+                <td>{{ p.tx_type }}</td>
+                <td>{{ p.amount }}</td>
+                <td>
+                    {% if p.prediction == 1 %}
+                        <span style="color: red;">Fraud</span>
+                    {% else %}
+                        Not Fraud
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">No data available.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
